@@ -214,14 +214,11 @@
       background: var(--line);
     }
     .fact { min-height: 110px; padding: 22px; background: var(--surface); }
-    .fact.with-logo {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .fact.with-logo img { width: 64px; height: 64px; flex: 0 0 64px; object-fit: contain; }
-    [data-theme="dark"] .fact.with-logo img { filter: brightness(2) saturate(1.4); }
-    .fact-content { min-width: 0; }
+    .fact.institution { background: color-mix(in srgb, var(--institution-color) 10%, var(--surface)); }
+    .fact.institution-uu { --institution-color: #9d2833; }
+    .fact.institution-kth { --institution-color: #000061; }
+    .fact.institution-nyu { --institution-color: #5c2a95; }
+    [data-theme="dark"] .fact.institution { background: color-mix(in srgb, var(--institution-color) 22%, var(--surface)); }
     .fact strong { display: block; margin-bottom: 5px; font-size: .95rem; }
     .fact span { color: var(--muted); font-size: .86rem; }
     .skills {
@@ -354,26 +351,17 @@
           </div>
         </div>
         <div class="facts">
-          <div class="fact with-logo">
-            <img src="Figure/UU-Logo-cropped.png" alt="">
-            <div class="fact-content">
-              <strong>Postdoctoral Researcher</strong>
-              <span>Uppsala University · 2026–present<br>Supervisors: Jens Sjölund and Leiting Zhang</span>
-            </div>
+          <div class="fact institution institution-uu">
+            <strong>Postdoctoral Researcher</strong>
+            <span>Uppsala University · 2026–present<br>Supervisors: Jens Sjölund and Leiting Zhang</span>
           </div>
-          <div class="fact with-logo">
-            <img src="Figure/KTH-Logo-cropped.png" alt="">
-            <div class="fact-content">
-              <strong>Ph.D.</strong>
-              <span>Network System Engineering · KTH · 2021–2026<br>Supervisor: György Dán</span>
-            </div>
+          <div class="fact institution institution-kth">
+            <strong>Ph.D.</strong>
+            <span>Network System Engineering · KTH · 2021–2026<br>Supervisor: György Dán</span>
           </div>
-          <div class="fact with-logo">
-            <img src="Figure/NYU-Logo-cropped.png" alt="">
-            <div class="fact-content">
-              <strong>Visiting Scholar</strong>
-              <span>New York University · 2024<br>Supervisor: Quanyan Zhu</span>
-            </div>
+          <div class="fact institution institution-nyu">
+            <strong>Visiting Scholar</strong>
+            <span>New York University · 2024<br>Supervisor: Quanyan Zhu</span>
           </div>
         </div>
         <div class="skills" aria-label="Areas of expertise">
