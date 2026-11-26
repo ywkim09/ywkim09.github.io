@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Research details for human-in-the-loop cyber intrusion detection using active learning and sequential hypothesis testing.">
+  <title>Human-in-the-Loop Intrusion Detection — Yeongwoo Kim</title>
+  <style>
+    :root {
+      color-scheme: light; --bg: #f7f8f6; --surface: #fff; --surface-soft: #eef2ef;
+      --text: #17231f; --muted: #64736d; --line: #dce4df; --accent: #176b55;
+      --shadow: 0 16px 48px rgb(22 46 36 / 7%);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    [data-theme="dark"] {
+      color-scheme: dark; --bg: #111815; --surface: #19221e; --surface-soft: #202c26;
+      --text: #edf4ef; --muted: #a4b2aa; --line: #34443b; --accent: #8ed3b2;
+      --shadow: 0 16px 48px rgb(0 0 0 / 18%);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.7 var(--sans); transition: background-color 180ms ease, color 180ms ease; }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    .wrap { width: min(1080px, calc(100% - 48px)); margin-inline: auto; }
+    .topbar { position: sticky; z-index: 5; top: 0; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(14px); }
+    .nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .wordmark { font: 700 1.15rem var(--serif); letter-spacing: -.03em; text-decoration: none; white-space: nowrap; }
+    .nav-tools { display: flex; align-items: center; gap: 18px; }
+    .back-link, .text-link { color: var(--accent); font-size: .9rem; font-weight: 600; text-underline-offset: 4px; }
+    .theme-toggle { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--text); cursor: pointer; font-size: 1.05rem; }
+    main { overflow: hidden; }
+    .hero { position: relative; padding-block: 100px 76px; }
+    .hero::after { position: absolute; z-index: -1; top: 48px; right: -120px; width: 390px; height: 390px; border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 0 0 42px var(--bg), 0 0 0 43px var(--line), 0 0 0 88px var(--bg), 0 0 0 89px var(--line); content: ""; opacity: .65; }
+    .eyebrow, .section-kicker { color: var(--accent); font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .eyebrow { margin: 0 0 22px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 860px; margin-bottom: 24px; font: 400 clamp(2.8rem, 7vw, 5.4rem)/1.03 var(--serif); letter-spacing: -.06em; }
+    h1 span { color: var(--accent); }
+    .lede { max-width: 710px; margin-bottom: 28px; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.2rem); }
+    .tags { display: flex; flex-wrap: wrap; gap: 9px; }
+    .tag { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .82rem; }
+    .metric { max-width: 380px; min-height: 135px; margin-top: 30px; padding: 24px; border: 1px solid var(--line); background: var(--surface); }
+    .metric strong { display: block; margin-bottom: 8px; color: var(--accent); font: 400 2rem/1.1 var(--serif); }
+    .metric span { color: var(--muted); font-size: .88rem; }
+    .section { padding-block: 72px; border-top: 1px solid var(--line); }
+    .section-heading { display: grid; grid-template-columns: minmax(180px, .7fr) 1.3fr; gap: 42px; margin-bottom: 34px; }
+    .section-kicker { margin: 7px 0 0; }
+    h2 { margin-bottom: 14px; font: 400 clamp(2rem, 4vw, 3rem)/1.12 var(--serif); letter-spacing: -.045em; }
+    h3 { margin-bottom: 9px; font-size: 1rem; line-height: 1.4; }
+    .section-copy { max-width: 710px; margin-bottom: 0; color: var(--muted); }
+    .section-copy strong, .card strong { color: var(--text); font-weight: 600; }
+    .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .card { padding: 25px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
+    .card p, .card li { color: var(--muted); font-size: .94rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul { margin: 12px 0 0; padding-left: 19px; }
+    .card li + li { margin-top: 7px; }
+    .stage-label { display: block; margin-bottom: 10px; color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .flow { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 26px; border: 1px solid var(--line); background: var(--surface); }
+    .flow-step { min-height: 135px; padding: 21px 18px; }
+    .flow-step + .flow-step { border-left: 1px solid var(--line); }
+    .flow-step b { display: block; margin-bottom: 8px; color: var(--accent); font-size: .76rem; letter-spacing: .1em; }
+    .flow-step strong { display: block; margin-bottom: 7px; font-size: .92rem; }
+    .flow-step span { color: var(--muted); font-size: .83rem; line-height: 1.55; }
+    .note { margin: 20px 0 0; color: var(--muted); font-size: .85rem; }
+    .citation { padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--muted); font-size: .93rem; }
+    .citation strong { color: var(--text); }
+    .contact-card { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 30px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); box-shadow: var(--shadow); }
+    .contact-card p { margin: 0; color: var(--muted); }
+    footer { padding-block: 25px 35px; color: var(--muted); font-size: .8rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 16px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 36px, 600px); } .nav { min-height: 64px; }
+      .hero { padding-block: 76px 58px; } .hero::after { top: 150px; right: -300px; opacity: .4; }
+      .section { padding-block: 58px; } .section-heading { grid-template-columns: 1fr; gap: 12px; margin-bottom: 27px; }
+      .cards { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: repeat(2, 1fr); }
+      .flow-step:nth-child(3) { border-top: 1px solid var(--line); border-left: 0; }
+      .flow-step:nth-child(4) { border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 480px) {
+      .wordmark { font-size: 1rem; } .nav-tools { gap: 10px; } .back-link { font-size: .78rem; }
+      .theme-toggle { width: 36px; height: 36px; } .flow { grid-template-columns: 1fr; }
+      .flow-step + .flow-step { border-top: 1px solid var(--line); border-left: 0; }
+      .contact-card, .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="wordmark" href="index.html">Yeongwoo Kim</a>
+      <div class="nav-tools">
+        <a class="back-link" href="index.html#publications">← Publications</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" title="Toggle color theme"><span id="theme-icon" aria-hidden="true">☀</span></button>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="hero wrap">
+      <p class="eyebrow">Research · Human-in-the-loop · Cybersecurity</p>
+      <h1>Intrusion detection with the <span>analyst in the loop.</span></h1>
+      <p class="lede">This framework connects alert investigations to sequential intrusion detection: analyst outcomes adapt the model of alert observations, while active learning chooses investigations that help distinguish competing hypotheses.</p>
+      <div class="tags" aria-label="Research topics">
+        <span class="tag">Human-in-the-loop learning</span><span class="tag">Active Learning</span>
+        <span class="tag">Hidden Markov Models</span><span class="tag">Sequential Testing</span>
+      </div>
+      <div class="metric" aria-label="Reported simulation result"><strong>Up to 79%</strong><span>lower detection time than a static baseline in simulation, while maintaining the target mean time between false detections</span></div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">01 / The challenge</p>
+          <div>
+            <h2>Detection must adapt as analysts investigate.</h2>
+            <p class="section-copy">An intrusion detector must decide whether observed alerts indicate an attack, even though its view of attacker activity is incomplete. Analyst investigation provides valuable feedback, but the system also needs to choose which alerts are most useful to inspect and when enough evidence has accumulated to raise a detection.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <article class="card"><span class="stage-label">Feedback</span><h3>Learn from investigation outcomes</h3><p>Past alerts and analyst findings are used to update observation probabilities, so subsequent inference can reflect what investigations have revealed.</p></article>
+          <article class="card"><span class="stage-label">Decision</span><h3>Balance speed and false detections</h3><p>Detection is framed as sequential testing over competing hypotheses, allowing evidence to accumulate before the system makes a decision.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">02 / Framework</p>
+          <div>
+            <h2>Use feedback to guide the next decision.</h2>
+            <p class="section-copy">The framework combines dynamic alert prioritization, analyst investigations, and sequential multi-hypothesis testing over pruned Hidden Markov Models.</p>
+          </div>
+        </div>
+        <div class="flow" aria-label="Human-in-the-loop detection process">
+          <div class="flow-step"><b>01</b><strong>Model hypotheses</strong><span>Represent possible system and attacker states with pruned HMMs.</span></div>
+          <div class="flow-step"><b>02</b><strong>Select an alert</strong><span>Prioritize an investigation for its expected decision value.</span></div>
+          <div class="flow-step"><b>03</b><strong>Update observations</strong><span>Incorporate the analyst's finding into observation probabilities.</span></div>
+          <div class="flow-step"><b>04</b><strong>Test sequentially</strong><span>Accumulate evidence until a detection decision is supported.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">03 / Active learning</p>
+          <div>
+            <h2>Choose queries that separate hypotheses.</h2>
+            <p class="section-copy">Two policies are proposed for selecting investigations in the sequential testing setting. Both use expected information about competing hypotheses, but measure that value differently.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <article class="card"><span class="stage-label">Likelihood-ratio change</span><h3>Max Ratio</h3><p>Chooses investigations that maximize the expected change in likelihood ratios between the hypotheses being tested.</p></article>
+          <article class="card"><span class="stage-label">Hypothesis distinguishability</span><h3>Max KL</h3><p>Prioritizes observations expected to increase the Kullback–Leibler distinguishability between competing hypotheses.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">04 / Evaluation</p>
+          <div>
+            <h2>Faster detection in the reported simulations.</h2>
+            <p class="section-copy">The human-in-the-loop policies were evaluated against a static alert-selection baseline. The reported detection-time gains were measured while maintaining a target mean time between false detections.</p>
+          </div>
+        </div>
+        <article class="card">
+          <span class="stage-label">Reported simulation result</span>
+          <h3>Up to 79% lower detection time</h3>
+          <p>The proposed query strategies reduced detection time by up to 79% compared with the static baseline in the evaluated simulations, under the specified false-detection constraint.</p>
+        </article>
+        <p class="note">This is the best reported result from simulation, not a guarantee for every data set or operational deployment.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading"><p class="section-kicker">05 / Publication</p><div><h2>The paper.</h2></div></div>
+        <div class="citation"><strong>Human-in-the-loop cyber intrusion detection using active learning.</strong> Kim, Y., Dán, G. &amp; Zhu, Q. <em>IEEE Transactions on Information Forensics and Security.</em></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="contact-card">
+          <div><p class="section-kicker">Related work</p><h2 style="margin: 8px 0 10px">Start with alert prioritization.</h2><p>The preceding study selects alerts to improve estimates of attacker progress.</p></div>
+          <a class="text-link" href="dynamic-alert-prioritization.html">Dynamic alert prioritization ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><span>© <span id="year"></span> Yeongwoo Kim</span><span>Research case study · Hosted on GitHub Pages</span></div></footer>
+  <script>
+    const root = document.documentElement;
+    const themeButton = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+    const initialTheme = localStorage.getItem("theme") || "dark";
+    function setTheme(theme) {
+      root.dataset.theme = theme;
+      themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+      themeButton.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    }
+    setTheme(initialTheme);
+    themeButton.addEventListener("click", () => {
+      const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(nextTheme);
+      localStorage.setItem("theme", nextTheme);
+    });
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

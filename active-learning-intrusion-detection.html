@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="A research case study on active learning, dynamic alert prioritization, and human-in-the-loop cyber intrusion detection.">
+  <title>Active Learning for Intrusion Detection — Yeongwoo Kim</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --surface: #ffffff;
+      --surface-soft: #eef2ef;
+      --text: #17231f;
+      --muted: #64736d;
+      --line: #dce4df;
+      --accent: #176b55;
+      --accent-soft: #e2f1e9;
+      --shadow: 0 16px 48px rgb(22 46 36 / 7%);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #111815;
+      --surface: #19221e;
+      --surface-soft: #202c26;
+      --text: #edf4ef;
+      --muted: #a4b2aa;
+      --line: #34443b;
+      --accent: #8ed3b2;
+      --accent-soft: #243a30;
+      --shadow: 0 16px 48px rgb(0 0 0 / 18%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      transition: background-color 180ms ease, color 180ms ease;
+    }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    .wrap { width: min(1080px, calc(100% - 48px)); margin-inline: auto; }
+    .topbar {
+      position: sticky;
+      z-index: 5;
+      top: 0;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(14px);
+    }
+    .nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .wordmark {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .nav-tools { display: flex; align-items: center; gap: 18px; }
+    .back-link, .text-link { color: var(--accent); font-size: .9rem; font-weight: 600; text-underline-offset: 4px; }
+    .theme-toggle {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.05rem;
+    }
+    main { overflow: hidden; }
+    .hero { position: relative; padding-block: 104px 88px; }
+    .hero::after {
+      position: absolute;
+      z-index: -1;
+      top: 48px;
+      right: -120px;
+      width: 390px;
+      height: 390px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      box-shadow: 0 0 0 42px var(--bg), 0 0 0 43px var(--line), 0 0 0 88px var(--bg), 0 0 0 89px var(--line);
+      content: "";
+      opacity: .65;
+    }
+    .hero-copy { max-width: 800px; }
+    .eyebrow, .section-kicker {
+      color: var(--accent);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .eyebrow { margin: 0 0 22px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 850px;
+      margin-bottom: 25px;
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 7vw, 5.7rem);
+      font-weight: 400;
+      letter-spacing: -.06em;
+      line-height: 1.02;
+    }
+    h1 span { color: var(--accent); }
+    .lede { max-width: 700px; margin-bottom: 30px; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.22rem); }
+    .tags { display: flex; flex-wrap: wrap; gap: 9px; }
+    .tag {
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 32px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+    .metric { min-height: 150px; padding: 24px; background: var(--surface); }
+    .metric strong { display: block; margin-bottom: 8px; color: var(--accent); font-family: var(--serif); font-size: 2rem; font-weight: 400; line-height: 1.1; }
+    .metric span { display: block; color: var(--muted); font-size: .88rem; }
+    .section { padding-block: 76px; border-top: 1px solid var(--line); }
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(180px, .7fr) 1.3fr;
+      gap: 42px;
+      margin-bottom: 38px;
+    }
+    .section-kicker { margin: 7px 0 0; }
+    h2 {
+      margin-bottom: 14px;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      font-weight: 400;
+      letter-spacing: -.045em;
+      line-height: 1.1;
+    }
+    h3 { margin-bottom: 9px; font-size: 1rem; line-height: 1.4; }
+    .section-copy { max-width: 710px; margin-bottom: 0; color: var(--muted); }
+    .section-copy strong, .card strong { color: var(--text); font-weight: 600; }
+    .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .card {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--surface);
+    }
+    .card p, .card li { color: var(--muted); font-size: .94rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul { margin: 14px 0 0; padding-left: 19px; }
+    .card li + li { margin-top: 7px; }
+    .stage-label { display: block; margin-bottom: 11px; color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 30px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .flow-step { position: relative; min-height: 145px; padding: 23px 20px; }
+    .flow-step + .flow-step { border-left: 1px solid var(--line); }
+    .flow-step b { display: block; margin-bottom: 8px; color: var(--accent); font-size: .76rem; letter-spacing: .1em; }
+    .flow-step strong { display: block; margin-bottom: 7px; font-size: .93rem; }
+    .flow-step span { display: block; color: var(--muted); font-size: .83rem; line-height: 1.55; }
+    .policy-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .policy {
+      padding: 20px;
+      border-top: 2px solid var(--accent);
+      background: var(--surface-soft);
+    }
+    .policy strong { display: block; margin-bottom: 8px; font-size: .94rem; }
+    .policy span { display: block; color: var(--muted); font-size: .84rem; }
+    .note { margin: 22px 0 0; color: var(--muted); font-size: .85rem; }
+    .papers { border-top: 1px solid var(--line); }
+    .paper {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 24px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .paper-type { color: var(--accent); font-size: .76rem; font-weight: 700; letter-spacing: .08em; }
+    .paper p { margin: 0; color: var(--muted); font-size: .92rem; }
+    .paper strong { color: var(--text); font-weight: 600; }
+    .paper-title-link { color: inherit; text-decoration: none; }
+    .paper-title-link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .contact-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .contact-card p { margin: 0; color: var(--muted); }
+    footer { padding-block: 25px 35px; color: var(--muted); font-size: .8rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 16px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 36px, 600px); }
+      .nav { min-height: 64px; }
+      .hero { padding-block: 78px 64px; }
+      .hero::after { top: 160px; right: -300px; opacity: .4; }
+      .section { padding-block: 60px; }
+      .section-heading { grid-template-columns: 1fr; gap: 12px; margin-bottom: 28px; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric { min-height: 0; }
+      .cards { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: repeat(2, 1fr); }
+      .flow-step:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .flow-step:nth-child(4) { border-top: 1px solid var(--line); }
+      .policy-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .wordmark { font-size: 1rem; }
+      .nav-tools { gap: 10px; }
+      .back-link { font-size: .78rem; }
+      .theme-toggle { width: 36px; height: 36px; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-step + .flow-step { border-top: 1px solid var(--line); border-left: 0; }
+      .policy-grid { grid-template-columns: 1fr; }
+      .paper { grid-template-columns: 1fr; gap: 5px; }
+      .contact-card { align-items: flex-start; flex-direction: column; padding: 25px; }
+      .footer-inner { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="wordmark" href="index.html">Yeongwoo Kim</a>
+      <div class="nav-tools">
+        <a class="back-link" href="index.html#publications">← Portfolio</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" title="Toggle color theme">
+          <span id="theme-icon" aria-hidden="true">☀</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Research case study · Cybersecurity · Active learning</p>
+        <h1>From alert overload to <span>analyst-guided</span> intrusion detection.</h1>
+        <p class="lede">A research line connecting dynamic alert prioritization with human-in-the-loop learning: focus analyst effort on informative alerts, then use those investigations to detect intrusions sooner.</p>
+        <div class="tags" aria-label="Research topics">
+          <span class="tag">Hidden Markov Models</span>
+          <span class="tag">Active Learning</span>
+          <span class="tag">Intrusion Detection</span>
+          <span class="tag">Sequential Testing</span>
+        </div>
+        <div class="metrics" aria-label="Reported simulation results">
+          <div class="metric">
+            <strong>Up to 50%</strong>
+            <span>lower belief mean-squared error than baseline alert-selection methods</span>
+          </div>
+          <div class="metric">
+            <strong>Up to 85%</strong>
+            <span>less computation after dynamic state-space reduction, without significant increase in belief MSE</span>
+          </div>
+          <div class="metric">
+            <strong>Up to 79%</strong>
+            <span>shorter detection time in simulations with human-in-the-loop alert selection</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">01 / The challenge</p>
+          <div>
+            <h2>More alerts do not necessarily mean more insight.</h2>
+            <p class="section-copy">Intrusion detection systems can produce a large stream of alerts while an attacker progresses through a network. Analysts have limited time to investigate them. The research question was how to choose <strong>which alert to investigate next</strong> so that each analyst query improves situational awareness or supports a timely detection decision.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <span class="stage-label">Research problem</span>
+            <h3>Uncertainty about attacker progress</h3>
+            <p>An alert is evidence about possible attacker activity, not a complete view of the system. The detector must reason about uncertainty over hidden states and update that belief as observations arrive.</p>
+          </article>
+          <article class="card">
+            <span class="stage-label">Operational constraint</span>
+            <h3>Investigation effort is scarce</h3>
+            <p>Asking an analyst to inspect every alert is impractical. Prioritization should therefore account for what is currently uncertain, what can be learned, and whether the accumulated evidence warrants an alarm.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">02 / The approach</p>
+          <div>
+            <h2>One research line, two connected steps.</h2>
+            <p class="section-copy">The first study develops active alert prioritization around a Hidden Markov Model (HMM). The follow-up puts analyst investigations in the loop and uses their outcomes to adapt the observation model and support sequential intrusion detection.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <span class="stage-label">Study 1 · Dynamic prioritization</span>
+            <h3>Choose alerts that improve the state estimate</h3>
+            <p>The HMM represents hidden attacker progress and the system's belief about that progress. Active-learning policies select alerts to investigate based on their expected value for updating that belief. The study also reduces the state and exploit spaces to make inference more efficient.</p>
+          </article>
+          <article class="card">
+            <span class="stage-label">Study 2 · Human-in-the-loop detection</span>
+            <h3>Turn investigation outcomes into detection evidence</h3>
+            <p>Analyst findings from investigated alerts update observation probabilities. The framework combines the resulting evidence with sequential multi-hypothesis testing over pruned HMMs, allowing it to decide when evidence is sufficient to detect an intrusion.</p>
+          </article>
+        </div>
+        <div class="flow" aria-label="Research workflow">
+          <div class="flow-step"><b>01</b><strong>Observe alerts</strong><span>Maintain a probabilistic view of possible attacker progress.</span></div>
+          <div class="flow-step"><b>02</b><strong>Prioritize</strong><span>Select an alert using its expected information or decision value.</span></div>
+          <div class="flow-step"><b>03</b><strong>Investigate</strong><span>Use analyst feedback to refine the model of alert observations.</span></div>
+          <div class="flow-step"><b>04</b><strong>Test evidence</strong><span>Accumulate evidence and make a sequential detection decision.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">03 / Query strategies</p>
+          <div>
+            <h2>Different policies, different notions of value.</h2>
+            <p class="section-copy">The policies explore complementary ways to spend an analyst query. The names below refer to methods proposed in the two studies; they are not interchangeable objectives.</p>
+          </div>
+        </div>
+        <div class="policy-grid">
+          <div class="policy"><strong>MaxEntropy</strong><span>Chooses alerts expected to reduce uncertainty in the current state belief.</span></div>
+          <div class="policy"><strong>Bayes</strong><span>Prioritizes ambiguous alerts under the Bayesian alert-selection approach.</span></div>
+          <div class="policy"><strong>Max Ratio</strong><span>Selects investigations to maximize the expected change in likelihood ratios between hypotheses.</span></div>
+          <div class="policy"><strong>Max KL</strong><span>Targets observations that increase distinguishability between competing hypotheses.</span></div>
+        </div>
+        <p class="note">The first two policies address alert prioritization and belief estimation; Max Ratio and Max KL are introduced for the human-in-the-loop sequential detection setting.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">04 / Findings</p>
+          <div>
+            <h2>Prioritize carefully; keep inference tractable.</h2>
+            <p class="section-copy">In the reported evaluations, active prioritization improved belief estimation over the considered baselines. Dynamic reduction of the modeled state space lowered computation while preserving estimation quality, and the human-in-the-loop policies shortened detection time in simulation under a target false-detection constraint.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <span class="stage-label">Belief estimation</span>
+            <h3>Better use of each labeled alert</h3>
+            <ul>
+              <li>Proposed prioritization reduced belief MSE by up to 50% versus the evaluated baselines.</li>
+              <li>Dynamic state-space reduction cut computation time by up to 85% without a significant increase in belief MSE.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <span class="stage-label">Sequential detection</span>
+            <h3>Faster decisions with analyst feedback</h3>
+            <ul>
+              <li>Simulations reported up to 79% lower detection time than a static baseline.</li>
+              <li>The comparison maintained the specified target mean time between false detections.</li>
+            </ul>
+          </article>
+        </div>
+        <p class="note">These are maximum improvements reported in the papers' evaluations, not guarantees for every dataset or operational deployment. The detection-time result is from simulation.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">05 / Publications</p>
+          <div>
+            <h2>Studies behind this case.</h2>
+            <p class="section-copy">The two papers develop the prioritization and human-in-the-loop detection parts of this research line.</p>
+          </div>
+        </div>
+        <div class="papers">
+          <div class="paper">
+            <span class="paper-type">JOURNAL</span>
+            <p><a class="paper-title-link" href="dynamic-alert-prioritization.html"><strong>Dynamic Alert Prioritization for Real-time Situational Awareness: a Hidden Markov Model Framework with Active Learning.</strong></a> Kim, Y. &amp; Dán, G. <em>IEEE Transactions on Dependable and Secure Computing.</em></p>
+          </div>
+          <div class="paper">
+            <span class="paper-type">JOURNAL</span>
+            <p><a class="paper-title-link" href="human-in-the-loop-intrusion-detection.html"><strong>Human-in-the-loop cyber intrusion detection using active learning.</strong></a> Kim, Y., Dán, G. &amp; Zhu, Q. <em>IEEE Transactions on Information Forensics and Security.</em></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="contact-card">
+          <div>
+            <p class="section-kicker">Continue exploring</p>
+            <h2 style="margin: 8px 0 10px">Interested in this research?</h2>
+            <p>Read the full publication list or get in touch about research and collaboration.</p>
+          </div>
+          <a class="text-link" href="index.html#publications">Back to portfolio ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© <span id="year"></span> Yeongwoo Kim</span>
+      <span>Research case study · Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    const root = document.documentElement;
+    const themeButton = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+    const savedTheme = localStorage.getItem("theme");
+    const initialTheme = savedTheme || "dark";
+
+    function setTheme(theme) {
+      root.dataset.theme = theme;
+      themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+      themeButton.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    }
+
+    setTheme(initialTheme);
+    themeButton.addEventListener("click", () => {
+      const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(nextTheme);
+      localStorage.setItem("theme", nextTheme);
+    });
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
