@@ -263,6 +263,13 @@
     .pub-type { color: var(--accent); font-size: .78rem; font-weight: 700; }
     .publication p { margin: 0; color: var(--muted); font-size: .94rem; }
     .publication strong { color: var(--text); font-weight: 600; }
+    .publication .pub-metrics {
+      grid-column: 2;
+      margin-top: -14px;
+      color: var(--accent);
+      font-size: .8rem;
+      font-weight: 600;
+    }
     .contact {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -327,6 +334,7 @@
         <div class="nav-links">
           <a href="#about">About</a>
           <a href="#work">Research</a>
+          <a href="#teaching">Teaching</a>
           <a href="#contact">Contact</a>
         </div>
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Toggle color theme">
@@ -414,30 +422,57 @@
       </div>
     </section>
 
+    <section class="section" id="teaching">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">03 / Teaching</p>
+          <div>
+            <h2>Teaching and mentorship.</h2>
+            <p class="about-copy" style="margin-top: 18px">I enjoy helping students build strong foundations and take on independent research.</p>
+          </div>
+        </div>
+        <div class="facts">
+          <div class="fact"><strong>EP2120 · Internetworking</strong><span>Teaching Assistant · KTH · 2021–2025</span></div>
+          <div class="fact"><strong>Head Teaching Assistant</strong><span>Course coordination and management</span></div>
+          <div class="fact"><strong>Thesis Supervision</strong><span>8 master’s and 2 bachelor’s students</span></div>
+        </div>
+        <p class="about-copy" style="margin-top: 22px"><strong>Selected supervision:</strong> Anna Mårtensson (MSc, KTH, 2025) received the ISSLS2000 Scholarship for an outstanding thesis on machine-learning-based concept drift detection, supervised as main advisor.</p>
+      </div>
+    </section>
+
     <section class="section" id="publications">
       <div class="wrap">
         <div class="section-heading">
-          <p class="section-kicker">03 / Publications</p>
+          <p class="section-kicker">04 / Publications</p>
           <div>
             <h2>Recent research.</h2>
-            <p class="about-copy" style="margin-top: 18px">Selected publications on adaptive and data-efficient machine learning. Visit Google Scholar for the complete list.</p>
+            <p class="about-copy" style="margin-top: 18px">Selected publications on adaptive and data-efficient machine learning. Journal metrics below report the 2024 JIF and JCR category rank; top percentages are calculated from rank/total. Conference proceedings do not receive journal impact factors.</p>
           </div>
         </div>
         <div class="publication">
           <span class="pub-type">JOURNAL</span>
           <p><strong>Human-in-the-loop cyber intrusion detection using active learning.</strong> Kim, Y., Dán, G. &amp; Zhu, Q. <em>IEEE Transactions on Information Forensics and Security.</em></p>
+          <p class="pub-metrics">2024 JIF: 6.3 · JCR Computer Science, Theory &amp; Methods: 10/146 — top 6.8%</p>
         </div>
         <div class="publication">
           <span class="pub-type">JOURNAL</span>
           <p><strong>Dynamic Alert Prioritization for Real-time Situational Awareness: a Hidden Markov Model Framework with Active Learning.</strong> Kim, Y. &amp; Dán, G. <em>IEEE Transactions on Dependable and Secure Computing.</em></p>
+          <p class="pub-metrics">2024 JIF: 7.0 · JCR Computer Science, Software Engineering: 10/130 — top 7.7%</p>
         </div>
         <div class="publication">
           <span class="pub-type">CONFERENCE</span>
           <p><strong>Anomaly Detection in Security Logs using Sequence Modeling.</strong> Gökstorp, S., Nyberg, J., Kim, Y., Dán, G. &amp; Johnson, P. <em>IEEE Network Operations and Management Symposium, 2024.</em></p>
+          <p class="pub-metrics">Journal impact factor / JCR journal rank: Not applicable to conference proceedings</p>
         </div>
         <div class="publication">
           <span class="pub-type">CONFERENCE</span>
-          <p><strong>Channel-Centric Spatio-Temporal Graph Networks for Network-based Intrusion Detection.</strong> Escriche, E. S., Nyberg, J., Kim, Y. &amp; Dán, G. <em>IEEE Conference on Communications and Network Security, 2024.</em></p>
+          <p><strong><a class="text-link" href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=en&amp;user=HZJ5SgUAAAAJ&amp;citation_for_view=HZJ5SgUAAAAJ:zYLM7Y9cAGgC">Channel-centric spatio-temporal graph networks for network-based intrusion detection.</a></strong> Escriche, E. S., Nyberg, J., Kim, Y. &amp; Dán, G. <em>IEEE Conference on Communications and Network Security (CNS), 2024, pp. 1–9.</em></p>
+          <p class="pub-metrics">Journal impact factor / JCR journal rank: Not applicable to conference proceedings</p>
+        </div>
+        <div class="publication">
+          <span class="pub-type">CONFERENCE</span>
+          <p><strong><a class="text-link" href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=en&amp;user=HZJ5SgUAAAAJ&amp;citation_for_view=HZJ5SgUAAAAJ:u5HHmVD_uO8C">Dynamic clustering in federated learning.</a></strong> Kim, Y., Al Hakim, E., Haraldson, J., Eriksson, H., da Silva, J. M. B. &amp; Fischione, C. <em>IEEE International Conference on Communications (ICC), 2021, pp. 1–6.</em></p>
+          <p class="pub-metrics">Journal impact factor / JCR journal rank: Not applicable to conference proceedings</p>
         </div>
       </div>
     </section>
@@ -445,7 +480,7 @@
     <section class="section" id="patent">
       <div class="wrap">
         <div class="section-heading">
-          <p class="section-kicker">04 / Patent</p>
+          <p class="section-kicker">05 / Patent</p>
           <div>
             <h2>Research beyond publications.</h2>
             <div class="publication" style="margin-top: 24px">
@@ -461,7 +496,7 @@
       <div class="wrap">
         <div class="contact">
           <div>
-            <p class="section-kicker">05 / Contact</p>
+            <p class="section-kicker">06 / Contact</p>
             <h2>Let’s make something meaningful.</h2>
             <p>Interested in research, collaboration, or just saying hello? I’d love to hear from you.</p>
           </div>
