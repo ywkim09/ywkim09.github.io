@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Yeongwoo Kim is a researcher working on machine learning, anomaly detection, and cybersecurity.">
+  <title>Yeongwoo Kim — Researcher in AI &amp; Cybersecurity</title>
+  <style>
+    /* Quick edits: update the profile text and links in the sections below.
+       Change the color palette here; the theme toggle is saved in this browser. */
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --surface: #ffffff;
+      --surface-soft: #eef2ef;
+      --text: #17231f;
+      --muted: #64736d;
+      --line: #dce4df;
+      --accent: #176b55;
+      --accent-soft: #e2f1e9;
+      --shadow: 0 16px 48px rgb(22 46 36 / 7%);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #111815;
+      --surface: #19221e;
+      --surface-soft: #202c26;
+      --text: #edf4ef;
+      --muted: #a4b2aa;
+      --line: #34443b;
+      --accent: #8ed3b2;
+      --accent-soft: #243a30;
+      --shadow: 0 16px 48px rgb(0 0 0 / 18%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      transition: background-color 180ms ease, color 180ms ease;
+    }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    .wrap { width: min(1080px, calc(100% - 48px)); margin-inline: auto; }
+    .topbar {
+      position: sticky;
+      z-index: 5;
+      top: 0;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(14px);
+    }
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .wordmark {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .nav-right, .nav-links { display: flex; align-items: center; }
+    .nav-right { gap: 28px; }
+    .nav-links { gap: 25px; }
+    .nav-links a {
+      color: var(--muted);
+      font-size: .88rem;
+      text-decoration: none;
+      transition: color 160ms ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .theme-toggle {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.05rem;
+    }
+    main { overflow: hidden; }
+    .hero {
+      position: relative;
+      display: grid;
+      min-height: 590px;
+      align-items: center;
+      padding-block: 92px 100px;
+    }
+    .hero::after {
+      position: absolute;
+      z-index: -1;
+      top: 68px;
+      right: -120px;
+      width: 450px;
+      height: 450px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      box-shadow: 0 0 0 46px var(--bg), 0 0 0 47px var(--line), 0 0 0 100px var(--bg), 0 0 0 101px var(--line);
+      content: "";
+      opacity: .7;
+    }
+    .hero-copy { max-width: 720px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 22px;
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      width: 24px;
+      height: 1px;
+      background: currentColor;
+      content: "";
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 760px;
+      margin-bottom: 24px;
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 8vw, 6.7rem);
+      font-weight: 400;
+      letter-spacing: -.065em;
+      line-height: .98;
+    }
+    h1 span { color: var(--accent); }
+    .hero-lede {
+      max-width: 590px;
+      margin-bottom: 32px;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.22rem);
+    }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .button {
+      display: inline-flex;
+      min-height: 47px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 10px 18px;
+      border: 1px solid var(--accent);
+      border-radius: 5px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: .9rem;
+      font-weight: 650;
+      text-decoration: none;
+      transition: transform 160ms ease, opacity 160ms ease;
+    }
+    .button:hover { transform: translateY(-2px); opacity: .9; }
+    .button.secondary { background: transparent; color: var(--text); border-color: var(--line); }
+    .section { padding-block: 82px; border-top: 1px solid var(--line); }
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(180px, .7fr) 1.3fr;
+      gap: 42px;
+      margin-bottom: 42px;
+    }
+    .section-kicker {
+      margin: 7px 0 0;
+      color: var(--accent);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h2 {
+      margin-bottom: 0;
+      font-family: var(--serif);
+      font-size: clamp(2.1rem, 4vw, 3.25rem);
+      font-weight: 400;
+      letter-spacing: -.045em;
+      line-height: 1.1;
+    }
+    .about-copy {
+      max-width: 680px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.07rem;
+    }
+    .about-copy strong { color: var(--text); font-weight: 600; }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 45px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+    .fact { min-height: 110px; padding: 22px; background: var(--surface); }
+    .fact strong { display: block; margin-bottom: 5px; font-size: .95rem; }
+    .fact span { color: var(--muted); font-size: .86rem; }
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 25px;
+    }
+    .tag {
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .project {
+      display: flex;
+      min-height: 250px;
+      flex-direction: column;
+      padding: 27px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      transition: transform 180ms ease, border-color 180ms ease;
+    }
+    .project:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .project-number {
+      margin-bottom: 23px;
+      color: var(--accent);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+    .project h3 { margin-bottom: 10px; font-family: var(--serif); font-size: 1.45rem; font-weight: 400; }
+    .project p { margin-bottom: 18px; color: var(--muted); font-size: .93rem; }
+    .project .tag { align-self: flex-start; margin-top: auto; color: var(--accent); border-color: var(--accent); }
+    .publication {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 24px;
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+    }
+    .publication:last-child { border-bottom: 1px solid var(--line); }
+    .pub-type { color: var(--accent); font-size: .78rem; font-weight: 700; }
+    .publication p { margin: 0; color: var(--muted); font-size: .94rem; }
+    .publication strong { color: var(--text); font-weight: 600; }
+    .contact {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 32px;
+      padding: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .contact h2 { max-width: 540px; margin-bottom: 13px; }
+    .contact p { margin-bottom: 0; color: var(--muted); }
+    .contact-links { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .text-link {
+      color: var(--accent);
+      font-size: .92rem;
+      font-weight: 600;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+    footer { padding-block: 25px 35px; color: var(--muted); font-size: .8rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 16px; }
+    .reveal { animation: rise-in 650ms both; }
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+    @media (max-width: 700px) {
+      .wrap { width: min(100% - 36px, 560px); }
+      .nav { min-height: 64px; }
+      .nav-right { gap: 14px; }
+      .nav-links { gap: 13px; }
+      .nav-links a { font-size: .78rem; }
+      .hero { min-height: 520px; padding-block: 78px; }
+      .hero::after { top: 145px; right: -310px; opacity: .45; }
+      .section { padding-block: 62px; }
+      .section-heading { grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
+      .facts { grid-template-columns: 1fr; }
+      .fact { min-height: 0; }
+      .project-grid { grid-template-columns: 1fr; }
+      .publication { grid-template-columns: 1fr; gap: 4px; }
+      .contact { grid-template-columns: 1fr; padding: 28px; }
+    }
+    @media (max-width: 430px) {
+      .nav-links { gap: 9px; }
+      .nav-links a { font-size: .72rem; }
+      .wordmark { font-size: 1rem; }
+      .nav-right { gap: 9px; }
+      .theme-toggle { width: 36px; height: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="wordmark" href="#home">Yeongwoo Kim</a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#work">Research</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Toggle color theme">
+          <span id="theme-icon" aria-hidden="true">☾</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap" id="home">
+      <div class="hero-copy reveal">
+        <p class="eyebrow">Researcher · AI &amp; Cybersecurity</p>
+        <h1>Yeongwoo<br><span>Kim</span></h1>
+        <p class="hero-lede">I build more adaptive and efficient machine learning systems for cybersecurity — with a focus on anomaly detection, active learning, and human-in-the-loop AI.</p>
+        <div class="actions">
+          <a class="button" href="#work">Explore my research <span aria-hidden="true">↘</span></a>
+          <a class="button secondary" href="mailto:yeongwoo.kim@it.uu.se">Get in touch</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">01 / About</p>
+          <div>
+            <h2>Research with real-world impact.</h2>
+            <p class="about-copy" style="margin-top: 18px">I am a Ph.D. researcher in Network System Engineering at <strong>KTH Royal Institute of Technology</strong>, working at the intersection of machine learning and network security. My research explores how to detect threats with limited labels, adapt to changing environments, and help analysts make timely decisions. I have also collaborated with New York University and industry partners including Ericsson.</p>
+          </div>
+        </div>
+        <div class="facts">
+          <div class="fact"><strong>Ph.D. Researcher</strong><span>Network System Engineering · KTH</span></div>
+          <div class="fact"><strong>Visiting Scholar</strong><span>New York University · 2024</span></div>
+          <div class="fact"><strong>Industry Experience</strong><span>Ericsson · POSCO</span></div>
+        </div>
+        <div class="skills" aria-label="Areas of expertise">
+          <span class="tag">Anomaly Detection</span>
+          <span class="tag">Active Learning</span>
+          <span class="tag">Cybersecurity</span>
+          <span class="tag">Federated Learning</span>
+          <span class="tag">Human-in-the-Loop AI</span>
+          <span class="tag">Python · C++ · MATLAB</span>
+          <span class="tag">PyTorch · TensorFlow</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="work">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">02 / Selected work</p>
+          <div>
+            <h2>Curious about the hard problems.</h2>
+            <p class="about-copy" style="margin-top: 18px">A selection of themes from my research and collaborations.</p>
+          </div>
+        </div>
+        <div class="project-grid">
+          <article class="project">
+            <span class="project-number">RESEARCH 01</span>
+            <h3>Human-in-the-loop intrusion detection</h3>
+            <p>Combining active learning and analyst feedback to improve cyber intrusion detection while making the best use of limited labeling effort.</p>
+            <span class="tag">Active learning · Security</span>
+          </article>
+          <article class="project">
+            <span class="project-number">RESEARCH 02</span>
+            <h3>Adaptive detection under concept drift</h3>
+            <p>Developing label-efficient network intrusion detection that can respond as data and attacker behavior change over time.</p>
+            <span class="tag">Anomaly detection · Adaptation</span>
+          </article>
+          <article class="project">
+            <span class="project-number">RESEARCH 03</span>
+            <h3>Dynamic alert prioritization</h3>
+            <p>Using a hidden Markov model framework with active learning to help security teams prioritize alerts for real-time situational awareness.</p>
+            <span class="tag">Decision-making · Security operations</span>
+          </article>
+          <article class="project">
+            <span class="project-number">INDUSTRY 04</span>
+            <h3>Dynamic clustering for federated learning</h3>
+            <p>Exploring GAN-based clustering approaches for federated learning in communication networks that continuously change.</p>
+            <span class="tag">Federated learning · GANs</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="publications">
+      <div class="wrap">
+        <div class="section-heading">
+          <p class="section-kicker">03 / Publications</p>
+          <div>
+            <h2>Recent research.</h2>
+            <p class="about-copy" style="margin-top: 18px">Selected publications and ongoing work. Visit Google Scholar for the complete list.</p>
+          </div>
+        </div>
+        <div class="publication">
+          <span class="pub-type">JOURNAL</span>
+          <p><strong>Human-in-the-loop cyber intrusion detection using active learning.</strong> Kim, Y., Dán, G. &amp; Zhu, Q. <em>IEEE Transactions on Information Forensics and Security.</em></p>
+        </div>
+        <div class="publication">
+          <span class="pub-type">JOURNAL</span>
+          <p><strong>Dynamic Alert Prioritization for Real-time Situational Awareness: a Hidden Markov Model Framework with Active Learning.</strong> Kim, Y. &amp; Dán, G. <em>IEEE Transactions on Dependable and Secure Computing.</em></p>
+        </div>
+        <div class="publication">
+          <span class="pub-type">CONFERENCE</span>
+          <p><strong>Anomaly Detection in Security Logs using Sequence Modeling.</strong> Gökstorp, S., Nyberg, J., Kim, Y., Dán, G. &amp; Johnson, P. <em>IEEE Network Operations and Management Symposium, 2024.</em></p>
+        </div>
+        <div class="publication">
+          <span class="pub-type">CONFERENCE</span>
+          <p><strong>Channel-Centric Spatio-Temporal Graph Networks for Network-based Intrusion Detection.</strong> Escriche, E. S., Nyberg, J., Kim, Y. &amp; Dán, G. <em>IEEE Conference on Communications and Network Security, 2024.</em></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="wrap">
+        <div class="contact">
+          <div>
+            <p class="section-kicker">04 / Contact</p>
+            <h2>Let’s make something meaningful.</h2>
+            <p>Interested in research, collaboration, or just saying hello? I’d love to hear from you.</p>
+          </div>
+          <div class="contact-links">
+            <a class="text-link" href="mailto:yeongwoo.kim@it.uu.se">yeongwoo.kim@it.uu.se ↗</a>
+            <a class="text-link" href="https://scholar.google.com/citations?user=HZJ5SgUAAAAJ&amp;hl=en" target="_blank" rel="noopener noreferrer">Google Scholar ↗</a>
+            <a class="text-link" href="https://www.linkedin.com/in/yeongwoo99/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© <span id="year"></span> Yeongwoo Kim</span>
+      <span>Made with care · Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    // Theme preference and default are both handled locally; no external scripts required.
+    const root = document.documentElement;
+    const themeButton = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+    const savedTheme = localStorage.getItem("theme");
+    const initialTheme = savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
+    function setTheme(theme) {
+      root.dataset.theme = theme;
+      themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+      themeButton.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    }
+
+    setTheme(initialTheme);
+    themeButton.addEventListener("click", () => {
+      const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(nextTheme);
+      localStorage.setItem("theme", nextTheme);
+    });
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
