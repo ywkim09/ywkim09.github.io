@@ -214,6 +214,14 @@
       background: var(--line);
     }
     .fact { min-height: 110px; padding: 22px; background: var(--surface); }
+    .fact.with-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .fact.with-logo img { width: 64px; height: 64px; flex: 0 0 64px; object-fit: contain; }
+    [data-theme="dark"] .fact.with-logo img { filter: brightness(2) saturate(1.4); }
+    .fact-content { min-width: 0; }
     .fact strong { display: block; margin-bottom: 5px; font-size: .95rem; }
     .fact span { color: var(--muted); font-size: .86rem; }
     .skills {
@@ -346,9 +354,27 @@
           </div>
         </div>
         <div class="facts">
-          <div class="fact"><strong>Postdoctoral Researcher</strong><span>Uppsala University · 2026–present<br>Supervisors: Jens Sjölund and Leiting Zhang</span></div>
-          <div class="fact"><strong>Ph.D.</strong><span>Network System Engineering · KTH · 2021–2026<br>Supervisor: György Dán</span></div>
-          <div class="fact"><strong>Visiting Scholar</strong><span>New York University · 2024<br>Supervisor: Quanyan Zhu</span></div>
+          <div class="fact with-logo">
+            <img src="Figure/UU-Logo-cropped.png" alt="">
+            <div class="fact-content">
+              <strong>Postdoctoral Researcher</strong>
+              <span>Uppsala University · 2026–present<br>Supervisors: Jens Sjölund and Leiting Zhang</span>
+            </div>
+          </div>
+          <div class="fact with-logo">
+            <img src="Figure/KTH-Logo-cropped.png" alt="">
+            <div class="fact-content">
+              <strong>Ph.D.</strong>
+              <span>Network System Engineering · KTH · 2021–2026<br>Supervisor: György Dán</span>
+            </div>
+          </div>
+          <div class="fact with-logo">
+            <img src="Figure/NYU-Logo-cropped.png" alt="">
+            <div class="fact-content">
+              <strong>Visiting Scholar</strong>
+              <span>New York University · 2024<br>Supervisor: Quanyan Zhu</span>
+            </div>
+          </div>
         </div>
         <div class="skills" aria-label="Areas of expertise">
           <span class="tag">Anomaly Detection</span>
@@ -415,7 +441,7 @@
         </div>
         <div class="publication">
           <span class="pub-type">EIT DIGITAL · 2018</span>
-          <p>Awarded the <strong>Non-EU Excellence scholarship</strong> through the EIT Digital Master School, including a monthly allowance of €1,000 paid in four installments.</p>
+          <p>Awarded the <strong>Category 1 (E1) Non-EU Excellence scholarship</strong> through the EIT Digital Master School for studies at Technical University of Berlin and KTH Royal Institute of Technology. The scholarship included a monthly allowance of €1,000, disbursed in four installments.</p>
         </div>
       </div>
     </section>
