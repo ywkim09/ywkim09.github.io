@@ -311,8 +311,12 @@
       .nav-right { gap: 14px; }
       .nav-links { gap: 13px; }
       .nav-links a { font-size: .78rem; }
-      .hero { grid-template-columns: 1fr; row-gap: 44px; min-height: 0; padding-block: 78px; }
-      .hero-globe { width: min(72vw, 340px); justify-self: center; }
+      .hero { grid-template-columns: 1fr; row-gap: 0; min-height: 0; padding-block: 78px; }
+      .hero-copy { display: contents; }
+      .hero-copy.reveal { animation: none; }
+      .hero-copy > * { animation: rise-in 650ms both; }
+      .hero-copy > .actions { order: 2; justify-content: center; }
+      .hero-globe { order: 1; width: min(72vw, 340px); justify-self: center; margin-bottom: 24px; }
       .section { padding-block: 62px; }
       .section-heading { grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
       .facts { grid-template-columns: 1fr; }
@@ -353,7 +357,7 @@
       <div class="hero-copy reveal">
         <p class="eyebrow">Postdoctoral Researcher · Machine Learning</p>
         <h1>Yeongwoo<br><span>Kim</span></h1>
-        <p class="hero-lede">I develop adaptive, data-efficient machine learning methods for real-world systems — from anomaly detection and active learning to acoustic-emission-based battery diagnosis.</p>
+        <p class="hero-lede">I develop adaptive, data-efficient machine learning methods for real-world systems — from anomaly detection and active learning to acoustic-emission-based battery diagnosis. I studied in South Korea, Germany, and Sweden, and collaborated with researchers in the United States.</p>
         <div class="actions">
           <a class="button" href="#publications">Explore my research <span aria-hidden="true">↘</span></a>
           <a class="button secondary" href="mailto:yeongwoo.kim@it.uu.se">Get in touch</a>
