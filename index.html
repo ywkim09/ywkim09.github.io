@@ -312,7 +312,7 @@
       .nav-links { gap: 13px; }
       .nav-links a { font-size: .78rem; }
       .hero { grid-template-columns: 1fr; min-height: 0; padding-block: 78px; }
-      .hero-globe { width: min(72vw, 340px); justify-self: center; margin-top: -22px; }
+      .hero-globe { display: none; }
       .section { padding-block: 62px; }
       .section-heading { grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
       .facts { grid-template-columns: 1fr; }
@@ -360,7 +360,7 @@
         </div>
       </div>
       <div class="hero-globe">
-        <canvas id="world-globe" tabindex="0" role="img" aria-label="Interactive rotating globe highlighting Sweden, the United States, Germany, and South Korea. Drag to rotate; use the left and right arrow keys."></canvas>
+        <canvas id="world-globe" tabindex="0" role="img" aria-label="Interactive rotating globe highlighting Sweden, New York State, Germany, and South Korea. Drag to rotate; use the left and right arrow keys."></canvas>
         <p id="globe-label" class="globe-label" aria-live="polite"></p>
         <p id="globe-status" class="visually-hidden" aria-live="polite"></p>
       </div>
@@ -551,26 +551,30 @@
     const globeHitContext = globeHitCanvas.getContext("2d", { willReadFrequently: true });
     const globeStatus = document.getElementById("globe-status");
     const globeLabel = document.getElementById("globe-label");
-    // Natural Earth country boundaries are public-domain data stored locally.
-    const highlightedCountries = new Set(["SWE", "USA", "DEU", "KOR"]);
+    // Natural Earth country and state boundaries are public-domain data stored locally.
+    const highlightedCountries = new Set(["SWE", "DEU", "KOR"]);
     const countryLabels = new Map([
       ["KOR", "I earned my bachelor's degree in South Korea."],
       ["DEU", "I earned my master's degree in Germany."],
       ["SWE", "I earned my master's and PhD degrees in Sweden."],
-      ["USA", "I was a visiting scholar in the United States."]
+      ["USA-NY", "I was a visiting scholar in New York."]
     ]);
     const countryHitColors = new Map([
       ["KOR", "rgb(1, 0, 0)"],
       ["DEU", "rgb(2, 0, 0)"],
       ["SWE", "rgb(3, 0, 0)"],
-      ["USA", "rgb(4, 0, 0)"]
+      ["USA-NY", "rgb(4, 0, 0)"]
     ]);
     const countryHitCodes = new Map([
       ["1,0,0", "KOR"],
       ["2,0,0", "DEU"],
       ["3,0,0", "SWE"],
-      ["4,0,0", "USA"]
+      ["4,0,0", "USA-NY"]
     ]);
+    const southKoreanIslands = [
+      { coordinates: [126.53, 33.36], radiusX: .0024, radiusY: .0015 },
+      { coordinates: [131.5, 37.24], radiusX: .0016, radiusY: .0016 }
+    ];
     let globeFeatures = [];
     let globeRotation = -10 * Math.PI / 180;
     let globeDragging = false;
@@ -726,6 +730,29 @@
       }
       globeContext.restore();
 
+      for (const island of southKoreanIslands) {
+        const point = globeVector(island.coordinates);
+        if (point.z < 0) continue;
+        const x = center + point.x * radius;
+        const y = center + point.y * radius;
+        const markerRadiusX = Math.max(.65, size * island.radiusX);
+        const markerRadiusY = Math.max(.55, size * island.radiusY);
+        globeContext.beginPath();
+        globeContext.ellipse(x, y, markerRadiusX, markerRadiusY, 0, 0, Math.PI * 2);
+        globeContext.fillStyle = isDark
+          ? "rgba(142, 211, 178, .9)"
+          : "rgba(23, 107, 85, .9)";
+        globeContext.fill();
+        globeContext.strokeStyle = isDark ? "rgba(237, 244, 239, .7)" : "rgba(23, 54, 41, .7)";
+        globeContext.lineWidth = .7;
+        globeContext.stroke();
+
+        globeHitContext.beginPath();
+        globeHitContext.ellipse(x, y, markerRadiusX + 2, markerRadiusY + 2, 0, 0, Math.PI * 2);
+        globeHitContext.fillStyle = countryHitColors.get("KOR");
+        globeHitContext.fill();
+      }
+
       globeContext.beginPath();
       globeContext.arc(center, center, radius, 0, Math.PI * 2);
       globeContext.strokeStyle = accent;
@@ -793,17 +820,29 @@
     });
     window.addEventListener("resize", drawGlobe);
 
-    fetch("assets/world-countries.geojson")
-      .then((response) => {
-        if (!response.ok) throw new Error(`Map data request failed: ${response.status}`);
+    Promise.all([
+      fetch("assets/world-countries.geojson").then((response) => {
+        if (!response.ok) throw new Error(`Country map request failed: ${response.status}`);
+        return response.json();
+      }),
+      fetch("assets/new-york-state.geojson").then((response) => {
+        if (!response.ok) throw new Error(`New York State map request failed: ${response.status}`);
         return response.json();
       })
-      .then((mapData) => {
-        globeFeatures = mapData.features.map((feature) => ({
-          code: feature.properties.ISO_A3,
-          geometry: feature.geometry,
-          highlighted: highlightedCountries.has(feature.properties.ISO_A3)
-        }));
+    ])
+      .then(([mapData, newYorkData]) => {
+        globeFeatures = [
+          ...mapData.features.map((feature) => ({
+            code: feature.properties.ISO_A3,
+            geometry: feature.geometry,
+            highlighted: highlightedCountries.has(feature.properties.ISO_A3)
+          })),
+          {
+            code: "USA-NY",
+            geometry: newYorkData.geometry,
+            highlighted: true
+          }
+        ];
         drawGlobe();
         requestAnimationFrame(animateGlobe);
       })
