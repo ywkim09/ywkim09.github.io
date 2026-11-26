@@ -66,6 +66,23 @@
     .flow-step b { display: block; margin-bottom: 8px; color: var(--accent); font-size: .76rem; letter-spacing: .1em; }
     .flow-step strong { display: block; margin-bottom: 7px; font-size: .92rem; }
     .flow-step span { color: var(--muted); font-size: .83rem; line-height: 1.55; }
+    .explorer { margin-top: 24px; padding: 26px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
+    .explorer-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+    .explorer-heading h3 { margin-bottom: 5px; font-size: 1.05rem; }
+    .explorer-heading p { margin: 0; color: var(--muted); font-size: .88rem; }
+    .policy-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .policy-button { padding: 8px 13px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--text); cursor: pointer; font: inherit; font-size: .84rem; }
+    .policy-button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: var(--bg); }
+    .explorer-result { margin-top: 20px; padding-top: 19px; border-top: 1px solid var(--line); }
+    .explorer-result h4 { margin: 0 0 5px; font-size: 1rem; }
+    .explorer-result p { max-width: 720px; margin: 0; color: var(--muted); font-size: .9rem; }
+    .candidate-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 18px; }
+    .candidate { padding: 15px; border: 1px solid var(--line); border-radius: 5px; opacity: .7; transition: border-color 180ms ease, opacity 180ms ease, background-color 180ms ease; }
+    .candidate.is-selected { border-color: var(--accent); background: var(--surface-soft); opacity: 1; }
+    .candidate strong, .candidate span { display: block; }
+    .candidate strong { margin-bottom: 4px; font-size: .88rem; }
+    .candidate span { color: var(--muted); font-size: .82rem; }
+    .example-note { margin: 15px 0 0; color: var(--muted); font-size: .8rem; }
     .note { margin: 20px 0 0; color: var(--muted); font-size: .85rem; }
     .citation { padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--muted); font-size: .93rem; }
     .citation strong { color: var(--text); }
@@ -80,6 +97,7 @@
       .section { padding-block: 58px; } .section-heading { grid-template-columns: 1fr; gap: 12px; margin-bottom: 27px; }
       .cards, .metrics { grid-template-columns: 1fr; } .metric { min-height: 0; }
       .flow { grid-template-columns: repeat(2, 1fr); }
+      .explorer-heading { flex-direction: column; }
       .flow-step:nth-child(3) { border-top: 1px solid var(--line); border-left: 0; }
       .flow-step:nth-child(4) { border-top: 1px solid var(--line); }
     }
@@ -151,6 +169,24 @@
           <article class="card"><span class="stage-label">Information gain</span><h3>MaxEntropy</h3><p>Selects alerts expected to reduce the entropy of the belief over hidden states, aiming to make the attack-state estimate more certain.</p></article>
           <article class="card"><span class="stage-label">Bayesian prioritization</span><h3>Bayes</h3><p>Prioritizes ambiguous alerts according to the proposed Bayesian policy, directing analyst attention toward observations that need clarification.</p></article>
         </div>
+        <div class="explorer" aria-labelledby="policy-explorer-title">
+          <div class="explorer-heading">
+            <div><h3 id="policy-explorer-title">Compare the policy lens</h3><p>Switch policies to see how the motivation for selecting an alert changes.</p></div>
+            <div class="policy-tabs" role="group" aria-label="Alert prioritization policy">
+              <button class="policy-button" type="button" data-policy="maxentropy" aria-pressed="true">MaxEntropy</button>
+              <button class="policy-button" type="button" data-policy="bayes" aria-pressed="false">Bayes</button>
+            </div>
+          </div>
+          <div class="explorer-result" aria-live="polite">
+            <h4 id="selected-alert">Example focus: uncertainty about the hidden state</h4>
+            <p id="policy-explanation">MaxEntropy favors an alert expected to reduce uncertainty in the current belief over attacker states.</p>
+            <div class="candidate-list" aria-label="Illustrative alert candidates">
+              <div class="candidate is-selected" data-candidate="uncertainty"><strong>Candidate A · State-transition signal</strong><span>Could clarify which hidden state is more likely.</span></div>
+              <div class="candidate" data-candidate="ambiguity"><strong>Candidate B · Ambiguous observation</strong><span>Has evidence that may need analyst interpretation.</span></div>
+            </div>
+          </div>
+          <p class="example-note">Conceptual illustration only: these candidates are not paper data, measured scores, or an implementation of the evaluated algorithms.</p>
+        </div>
       </div>
     </section>
 
@@ -211,6 +247,31 @@
       const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
       setTheme(nextTheme);
       localStorage.setItem("theme", nextTheme);
+    });
+    const policyOptions = {
+      maxentropy: {
+        candidate: "uncertainty",
+        title: "Example focus: uncertainty about the hidden state",
+        explanation: "MaxEntropy favors an alert expected to reduce uncertainty in the current belief over attacker states."
+      },
+      bayes: {
+        candidate: "ambiguity",
+        title: "Example focus: an ambiguous alert",
+        explanation: "The Bayes policy prioritizes ambiguous alert evidence for analyst investigation."
+      }
+    };
+    document.querySelectorAll(".policy-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const policy = policyOptions[button.dataset.policy];
+        document.querySelectorAll(".policy-button").forEach((option) => {
+          option.setAttribute("aria-pressed", String(option === button));
+        });
+        document.querySelectorAll(".candidate").forEach((candidate) => {
+          candidate.classList.toggle("is-selected", candidate.dataset.candidate === policy.candidate);
+        });
+        document.getElementById("selected-alert").textContent = policy.title;
+        document.getElementById("policy-explanation").textContent = policy.explanation;
+      });
     });
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
