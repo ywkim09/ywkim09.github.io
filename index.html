@@ -575,9 +575,11 @@
       ["3,0,0", "SWE"],
       ["4,0,0", "USA-NY"]
     ]);
-    const southKoreanIslands = [
-      { coordinates: [126.53, 33.36], radiusX: .0024, radiusY: .0015 },
-      { coordinates: [131.5, 37.24], radiusX: .0016, radiusY: .0016 }
+    const jejuToUlleungdoAreaRatio = 1849.3 / 72.86;
+    const southKoreanIslandLocations = [
+      { coordinates: [126.55875, 33.377361], areaRatioToJeju: 1 },
+      { coordinates: [130.8572, 37.5064], areaRatioToJeju: jejuToUlleungdoAreaRatio },
+      { coordinates: [131.869556, 37.240778], areaRatioToJeju: 9774 }
     ];
     const globeRotationPeriodMs = 10 * 60 * 1000;
     let globeFeatures = [];
@@ -617,6 +619,31 @@
         }
       }
       return clipped;
+    }
+
+    function projectedRingArea(ring) {
+      const points = clipToVisibleHemisphere(ring);
+      if (points.length < 3) return 0;
+      let twiceArea = 0;
+      for (let index = 0; index < points.length; index += 1) {
+        const next = points[(index + 1) % points.length];
+        twiceArea += points[index].x * next.y - next.x * points[index].y;
+      }
+      return Math.abs(twiceArea) / 2;
+    }
+
+    function projectedFeatureArea(feature, globeRadius) {
+      const polygons = feature.geometry.type === "Polygon"
+        ? [feature.geometry.coordinates]
+        : feature.geometry.coordinates;
+      let area = 0;
+      for (const polygon of polygons) {
+        const [outerRing, ...holes] = polygon;
+        const polygonArea = projectedRingArea(outerRing)
+          - holes.reduce((holeArea, ring) => holeArea + projectedRingArea(ring), 0);
+        area += Math.max(0, polygonArea);
+      }
+      return area * globeRadius * globeRadius;
     }
 
     function traceCountryRing(context, ring, center, radius) {
@@ -735,28 +762,26 @@
       }
       globeContext.restore();
 
-      for (const island of southKoreanIslands) {
+      const southKorea = globeFeatures.find((feature) => feature.code === "KOR");
+      const jejuRadius = southKorea
+        ? Math.sqrt(projectedFeatureArea(southKorea, radius) / (54 * Math.PI))
+        : 0;
+      globeContext.save();
+      globeContext.beginPath();
+      globeContext.arc(center, center, radius, 0, Math.PI * 2);
+      globeContext.clip();
+      for (const island of southKoreanIslandLocations) {
         const point = globeVector(island.coordinates);
-        if (point.z < 0) continue;
+        if (point.z < 0 || !jejuRadius) continue;
         const x = center + point.x * radius;
         const y = center + point.y * radius;
-        const markerRadiusX = Math.max(.65, size * island.radiusX);
-        const markerRadiusY = Math.max(.55, size * island.radiusY);
+        const markerRadius = jejuRadius / Math.sqrt(island.areaRatioToJeju);
         globeContext.beginPath();
-        globeContext.ellipse(x, y, markerRadiusX, markerRadiusY, 0, 0, Math.PI * 2);
-        globeContext.fillStyle = isDark
-          ? "rgba(142, 211, 178, .9)"
-          : "rgba(23, 107, 85, .9)";
+        globeContext.arc(x, y, markerRadius, 0, Math.PI * 2);
+        globeContext.fillStyle = accent;
         globeContext.fill();
-        globeContext.strokeStyle = isDark ? "rgba(237, 244, 239, .7)" : "rgba(23, 54, 41, .7)";
-        globeContext.lineWidth = .7;
-        globeContext.stroke();
-
-        globeHitContext.beginPath();
-        globeHitContext.ellipse(x, y, markerRadiusX + 2, markerRadiusY + 2, 0, 0, Math.PI * 2);
-        globeHitContext.fillStyle = countryHitColors.get("KOR");
-        globeHitContext.fill();
       }
+      globeContext.restore();
 
       globeContext.beginPath();
       globeContext.arc(center, center, radius, 0, Math.PI * 2);
