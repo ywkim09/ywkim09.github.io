@@ -364,7 +364,7 @@
         </div>
       </div>
       <div class="hero-globe">
-        <canvas id="world-globe" tabindex="0" role="img" aria-label="Interactive rotating globe highlighting Sweden, New York State, Germany, and South Korea. Drag to rotate; use the left and right arrow keys."></canvas>
+        <canvas id="world-globe" tabindex="0" role="img" aria-label="Interactive rotating globe highlighting Sweden, New York State, Germany, and South Korea. Scroll over the globe or drag to rotate; use the left and right arrow keys."></canvas>
         <p id="globe-label" class="globe-label" aria-live="polite"></p>
         <p id="globe-status" class="visually-hidden" aria-live="polite"></p>
       </div>
@@ -579,6 +579,7 @@
       { coordinates: [126.53, 33.36], radiusX: .0024, radiusY: .0015 },
       { coordinates: [131.5, 37.24], radiusX: .0016, radiusY: .0016 }
     ];
+    const globeRotationPeriodMs = 10 * 60 * 1000;
     let globeFeatures = [];
     let globeRotation = -10 * Math.PI / 180;
     let globeDragging = false;
@@ -783,7 +784,7 @@
 
     function animateGlobe(timestamp) {
       if (previousFrameTime && !globeDragging) {
-        globeRotation += Math.min(timestamp - previousFrameTime, 50) * .00012;
+        globeRotation += (timestamp - previousFrameTime) * (2 * Math.PI / globeRotationPeriodMs);
       }
       drawGlobe();
       if (hoverPointer && !globeDragging) updateGlobeHover(hoverPointer.x, hoverPointer.y);
@@ -816,6 +817,16 @@
       globeLabel.textContent = "";
       globeCanvas.classList.remove("is-over-country");
     });
+    globeCanvas.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      const scrollDelta = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? event.deltaY * 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? event.deltaY * globeCanvas.clientHeight
+          : event.deltaY;
+      globeRotation += scrollDelta * .0375;
+      drawGlobe();
+    }, { passive: false });
     globeCanvas.addEventListener("keydown", (event) => {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       event.preventDefault();
@@ -823,6 +834,8 @@
       drawGlobe();
     });
     window.addEventListener("resize", drawGlobe);
+    drawGlobe();
+    requestAnimationFrame(animateGlobe);
 
     Promise.all([
       fetch("assets/world-countries.geojson").then((response) => {
@@ -848,7 +861,6 @@
           }
         ];
         drawGlobe();
-        requestAnimationFrame(animateGlobe);
       })
       .catch((error) => {
         console.error("Could not load the globe's country boundaries.", error);
