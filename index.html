@@ -326,6 +326,17 @@
       .contact { grid-template-columns: 1fr; padding: 28px; }
     }
     @media (max-width: 430px) {
+      .nav {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas: "brand theme" "links links";
+        gap: 8px 12px;
+        padding-block: 10px;
+      }
+      .wordmark { grid-area: brand; }
+      .nav-right { display: contents; }
+      .nav-links { grid-area: links; justify-content: space-between; }
+      .theme-toggle { grid-area: theme; }
       .nav-links { gap: 9px; }
       .nav-links a { font-size: .72rem; }
       .wordmark { font-size: 1rem; }
